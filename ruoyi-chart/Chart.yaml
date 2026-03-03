@@ -1,0 +1,4 @@
+apiVersion: v2
+name: ruoyi          # 这一行必须有！
+version: 0.1.0
+description: RuoYi Helm Chart
