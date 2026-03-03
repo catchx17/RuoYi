@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ruoyi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ruoyi
+  template:
+    metadata:
+      labels:
+        app: ruoyi
+    spec:
+      containers:
+      - name: ruoyi
+        image: ruoyi:v1
+        ports:
+        - containerPort: 80
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "15"]
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 20
+          periodSeconds: 5
+        env:
+        - name: JAVA_OPTS
+          value: "-Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ruoyi-svc
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    nodePort: 30080
+  selector:
+    app: ruoyi
